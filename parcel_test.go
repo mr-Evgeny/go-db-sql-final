@@ -37,9 +37,7 @@ func ConnectDb() (*sql.DB, error) {
 // TestAddGetDelete проверяет добавление, получение и удаление посылки
 func TestAddGetDelete(t *testing.T) {
 	db, err := ConnectDb();
-	if err != nil {
-        require.NoError(t, err)
-    }
+    require.NoError(t, err)
 	defer db.Close()
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -66,15 +64,13 @@ func TestAddGetDelete(t *testing.T) {
     require.NoError(t, err)
 
     _, err = store.Get(parcel.Number)
-    require.Equal(t, sql.ErrNoRows, err)
+	require.ErrorIs(t, err, sql.ErrNoRows)
 }
 
 // TestSetAddress проверяет обновление адреса
 func TestSetAddress(t *testing.T) {
 	db, err := ConnectDb();
-	if err != nil {
-        require.NoError(t, err)
-    }
+    require.NoError(t, err)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -105,9 +101,7 @@ func TestSetAddress(t *testing.T) {
 // TestSetStatus проверяет обновление статуса
 func TestSetStatus(t *testing.T) {
 	db, err := ConnectDb();
-	if err != nil {
-        require.NoError(t, err)
-    }
+    require.NoError(t, err)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -136,9 +130,7 @@ func TestSetStatus(t *testing.T) {
 // TestGetByClient проверяет получение посылок по идентификатору клиента
 func TestGetByClient(t *testing.T) {
 	db, err := ConnectDb();
-	if err != nil {
-        require.NoError(t, err)
-    }
+    require.NoError(t, err)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -177,13 +169,13 @@ func TestGetByClient(t *testing.T) {
 	// убедитесь в отсутствии ошибки
 	require.NoError(t, err)
 	// убедитесь, что количество полученных посылок совпадает с количеством добавленных
-	require.Equal(t, len(storedParcels), len(parcels))
+	require.Len(t, storedParcels, len(parcels))
 
 	// check
 	for _, parcel := range storedParcels {
 		// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
 		// убедитесь, что значения полей полученных посылок заполнены верно
-		assert.Equal(t, parcel, parcelMap[parcel.Number])
+		assert.Equal(t, parcelMap[parcel.Number], parcel)
 	}
 }
